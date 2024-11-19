@@ -1,0 +1,32 @@
+﻿  appConfigConstants.h
+  helloTriangleApplication.cpp
+C:\Users\farao\source\repos\VulkanMap\VulkanMap\HelloTriangleApplication.h(42,24): error C3646: 'findQueueFamilies': unknown override specifier
+  (compiling source file 'helloTriangleApplication.cpp')
+  
+C:\Users\farao\source\repos\VulkanMap\VulkanMap\HelloTriangleApplication.h(42,41): error C2059: syntax error: '('
+  (compiling source file 'helloTriangleApplication.cpp')
+  
+C:\Users\farao\source\repos\VulkanMap\VulkanMap\HelloTriangleApplication.h(42,66): error C2238: unexpected token(s) preceding ';'
+  (compiling source file 'helloTriangleApplication.cpp')
+  
+C:\Users\farao\source\repos\VulkanMap\VulkanMap\helloTriangleApplication.cpp(138,13): error C3861: 'isDeviceSuitable': identifier not found
+C:\Users\farao\source\repos\VulkanMap\VulkanMap\helloTriangleApplication.cpp(149,32): error C2039: 'isDeviceSuitable': is not a member of 'HelloTriangleApplication'
+      C:\Users\farao\source\repos\VulkanMap\VulkanMap\HelloTriangleApplication.h(18,7):
+      see declaration of 'HelloTriangleApplication'
+  
+C:\Users\farao\source\repos\VulkanMap\VulkanMap\helloTriangleApplication.cpp(150,34): error C3861: 'findQueueFamilies': identifier not found
+C:\Users\farao\source\repos\VulkanMap\VulkanMap\helloTriangleApplication.cpp(155,46): error C2039: 'findQueueFamilies': is not a member of 'HelloTriangleApplication'
+      C:\Users\farao\source\repos\VulkanMap\VulkanMap\HelloTriangleApplication.h(18,7):
+      see declaration of 'HelloTriangleApplication'
+  
+  main.cpp
+C:\Users\farao\source\repos\VulkanMap\VulkanMap\helloTriangleApplication.h(42,24): error C3646: 'findQueueFamilies': unknown override specifier
+  (compiling source file 'main.cpp')
+  
+C:\Users\farao\source\repos\VulkanMap\VulkanMap\helloTriangleApplication.h(42,41): error C2059: syntax error: '('
+  (compiling source file 'main.cpp')
+  
+C:\Users\farao\source\repos\VulkanMap\VulkanMap\helloTriangleApplication.h(42,66): error C2238: unexpected token(s) preceding ';'
+  (compiling source file 'main.cpp')
+  
+  Generating Code...
