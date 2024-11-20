@@ -1,6 +1,12 @@
 #include "HelloTriangleApplication.h"
 #include "QueueFamilyIndices.h"
 
+#define VK_USE_PLATFORM_WIN32_KHR
+#define GLFW_INCLUDE_VULKAN
+#include <GLFW/glfw3.h>
+#define GLFW_EXPOSE_NATIVE_WIN32
+#include <GLFW/glfw3native.h>
+
 // Constructor
 HelloTriangleApplication::HelloTriangleApplication() {
     // Initialize resources (optional, depending on your needs)
@@ -30,9 +36,6 @@ void HelloTriangleApplication::DestroyDebugUtilsMessengerEXT(VkInstance instance
     }
 }
 
-
-
-// Run method
 void HelloTriangleApplication::run() {
     initWindow(); 
     initVulkan(); 
@@ -40,10 +43,8 @@ void HelloTriangleApplication::run() {
     cleanup();     
 }
 
-// Window initialization
 void HelloTriangleApplication::initWindow() {
     std::cout << "Initializing window..." << std::endl;
-    // Add code here
 
     glfwInit();
 
@@ -53,39 +54,51 @@ void HelloTriangleApplication::initWindow() {
     window = glfwCreateWindow(AppConfigConstants::WIDTH, AppConfigConstants::HEIGHT, "GIS::Operator", nullptr, nullptr);
 }
 
-// Vulkan initialization
 void HelloTriangleApplication::initVulkan() {
-    // Here, you would initialize Vulkan objects like VkInstance, VkDevice, etc.
     std::cout << "Initializing Vulkan..." << std::endl;
-    // Add Vulkan setup code here
 
     createInstance();
     setupDebugMessenger();
+    createSurface();
     pickPhysicalDevice();
     createLogicalDevice();
 }
 
-void HelloTriangleApplication::createLogicalDevice() {
+void HelloTriangleApplication::createSurface() {
+    if (glfwCreateWindowSurface(instanced, window, nullptr, &surface) != VK_SUCCESS) {
+        throw std::runtime_error("failed to create window surface!");
+    }
+}
 
+void HelloTriangleApplication::createLogicalDevice() {
     QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
 
-
-    VkDeviceQueueCreateInfo queueCreateInfo{};
-    queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-    queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
-    queueCreateInfo.queueCount = 1;
+    std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
+    std::set<uint32_t> uniqueQueueFamilies = {
+        indices.graphicsFamily.value(),
+        indices.presentFamily.value()
+    };
 
     float queuePriority = 1.0f;
-    queueCreateInfo.pQueuePriorities = &queuePriority;
+    for (uint32_t queueFamily : uniqueQueueFamilies) {
+        VkDeviceQueueCreateInfo queueCreateInfo{};
+        queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+        queueCreateInfo.queueFamilyIndex = queueFamily;
+        queueCreateInfo.queueCount = 1;
+        queueCreateInfo.pQueuePriorities = &queuePriority;
+        queueCreateInfos.push_back(queueCreateInfo);
+    }
 
     VkPhysicalDeviceFeatures deviceFeatures{};
 
     VkDeviceCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 
-    createInfo.pQueueCreateInfos = &queueCreateInfo;
-    createInfo.queueCreateInfoCount = 1;
+    createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
+    createInfo.pQueueCreateInfos = queueCreateInfos.data();
+
     createInfo.pEnabledFeatures = &deviceFeatures;
+
     createInfo.enabledExtensionCount = 0;
 
     if (enableValidationLayers) {
@@ -101,6 +114,7 @@ void HelloTriangleApplication::createLogicalDevice() {
     }
 
     vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
+    vkGetDeviceQueue(device, indices.presentFamily.value(), 0, &presentQueue);
 }
 
 
@@ -152,9 +166,7 @@ void HelloTriangleApplication::createInstance() {
     }
 }
 
-// Main loop
 void HelloTriangleApplication::mainLoop() {
-    // This is typically where the rendering and event polling happens
     std::cout << "Entering main loop..." << std::endl;
 
     while (!glfwWindowShouldClose(window)) {
@@ -206,6 +218,13 @@ QueueFamilyIndices HelloTriangleApplication::findQueueFamilies(VkPhysicalDevice 
             indices.graphicsFamily = i;
         }
 
+        VkBool32 presentSupport = false;
+        vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
+
+        if (presentSupport) {
+            indices.presentFamily = i;
+        }
+
         if (indices.isComplete()) {
             break;
         }
@@ -216,16 +235,16 @@ QueueFamilyIndices HelloTriangleApplication::findQueueFamilies(VkPhysicalDevice 
     return indices;
 }
 
-// Cleanup
 void HelloTriangleApplication::cleanup() {
-    // Release Vulkan resources, destroy objects, etc.
     std::cout << "Cleaning up resources..." << std::endl;
-    // Add Vulkan cleanup code here
+
+    vkDestroyDevice(device, nullptr);
 
     if (enableValidationLayers) {
         HelloTriangleApplication::DestroyDebugUtilsMessengerEXT(instanced, debugMessenger, nullptr);
     }
 
+    vkDestroySurfaceKHR(instanced, surface, nullptr);
     vkDestroyInstance(instanced, nullptr);
     
     glfwDestroyWindow(window);

@@ -15,32 +15,36 @@
 #include <cstring>
 #include "AppConfigConstants.h"
 #include "QueueFamilyIndices.h"
+#include <set>
 
 class HelloTriangleApplication {
 public:
 
-    // Constructor and Destructor
     HelloTriangleApplication();
     ~HelloTriangleApplication();
 
-    // Main application run method
     void run();
 
 private:
     GLFWwindow* window;
-    VkDebugUtilsMessengerEXT debugMessenger;
+
     VkInstance instanced;
+    VkDebugUtilsMessengerEXT debugMessenger;
+    VkSurfaceKHR surface;
+
     VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
     VkDevice device;
+
     VkQueue graphicsQueue;
+    VkQueue presentQueue;
 
         
-    // Vulkan initialization, main loop, and cleanup methods
     void initWindow();
     void initVulkan();
     void mainLoop();
     void cleanup();
     void createInstance();
+    void createSurface();
     void pickPhysicalDevice();
     void createLogicalDevice();
 
