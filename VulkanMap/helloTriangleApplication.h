@@ -13,9 +13,16 @@
 #include <stdexcept>
 #include <vector>
 #include <cstring>
+#include <cstdlib>
+#include <cstdint>
+#include <limits>
+#include <optional>
 #include "AppConfigConstants.h"
 #include "QueueFamilyIndices.h"
+#include "SwapChainSupportDetails.h"
 #include <set>
+#include <algorithm>
+
 
 class HelloTriangleApplication {
 public:
@@ -38,6 +45,11 @@ private:
     VkQueue graphicsQueue;
     VkQueue presentQueue;
 
+    VkSwapchainKHR swapChain;
+    std::vector<VkImage> swapChainImages;
+    VkFormat swapChainImageFormat;
+    VkExtent2D swapChainExtent;
+
         
     void initWindow();
     void initVulkan();
@@ -47,6 +59,13 @@ private:
     void createSurface();
     void pickPhysicalDevice();
     void createLogicalDevice();
+
+    void createSwapChain();
+    SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
+    VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+    VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
+    VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
+    bool checkDeviceExtensionSupport(VkPhysicalDevice device);
 
     QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
     bool isDeviceSuitable(VkPhysicalDevice device);
